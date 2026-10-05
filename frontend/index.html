@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#F8FAFC" />
+  <title>Sentinel — URL Threat Analysis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { sentinel: '#1D4ED8', electric: '#2563EB', cyanx: '#0891B2', indigo: '#4F46E5', slatebg: '#F8FAFC' },
+        boxShadow: { 'blue-soft': '0 24px 70px rgba(29,78,216,.10)', 'card': '0 12px 34px rgba(15,23,42,.06)' }
+      }}
+    }
+  </script>
+  <style>
+    :root{--blue:#1D4ED8;--blue2:#2563EB;--cyan:#0891B2;--indigo:#4F46E5;--bg:#F8FAFC;--ink:#0F172A;--body:#475569;--muted:#94A3B8;--line:#E2E8F0;--surface:#F1F5F9;--safe:#059669;--warn:#D97706;--danger:#DC2626}
+    html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}.mono{font-family:"JetBrains Mono","SFMono-Regular",Consolas,monospace}
+    .grid-bg{background-image:linear-gradient(rgba(37,99,235,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(8,145,178,.05) 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to bottom,black,transparent 92%)}
+    .orb{box-shadow:0 0 0 1px rgba(37,99,235,.15),0 0 70px rgba(37,99,235,.12),inset 0 0 40px rgba(8,145,178,.08)}
+    .float{animation:float 7s ease-in-out infinite}.spin{animation:spin 13s linear infinite}.spin2{animation:spin 18s linear infinite reverse}.pulse-dot{animation:pulse 1.8s ease-in-out infinite}
+    @keyframes float{50%{transform:translateY(-12px)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(16,185,129,.08)}}
+    .reveal{opacity:0;transform:translateY(18px);transition:.65s ease}.reveal.in{opacity:1;transform:none}.tilt{transform-style:preserve-3d;transition:transform .18s ease,box-shadow .18s ease}.tilt:hover{box-shadow:0 20px 50px rgba(15,23,42,.10)}
+    .glass{background:rgba(255,255,255,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.88);box-shadow:0 24px 70px rgba(29,78,216,.10)}
+    .loader{position:fixed;inset:0;background:rgba(248,250,252,.96);backdrop-filter:blur(16px);z-index:100;display:grid;place-items:center;transition:opacity .55s ease,visibility .55s}.loader.hide{opacity:0;visibility:hidden}.loader-ring{width:72px;height:72px;border-radius:50%;border:3px solid #dbeafe;border-top-color:var(--blue);animation:spin .9s linear infinite}.gauge-ring{transform:rotate(-90deg)}
+    .status-safe{color:var(--safe);background:#ECFDF5}.status-warn{color:var(--warn);background:#FFFBEB}.status-danger{color:var(--danger);background:#FEF2F2}
+    .scanline{background:linear-gradient(90deg,transparent,#2563eb,transparent);height:1px;animation:scan 1.4s ease-in-out infinite}@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+  </style>
+</head>
+<body>
+  <div id="browser-check" class="loader">
+    <div class="text-center">
+      <div class="relative mx-auto mb-5 h-[72px] w-[72px]"><div class="loader-ring"></div><div class="absolute inset-0 grid place-items-center text-sentinel">⌾</div></div>
+      <p class="mono text-[11px] font-semibold tracking-[.18em] text-slate-700">VERIFYING BROWSER INTEGRITY...</p>
+      <p class="mt-2 text-sm text-slate-500">Sentinel Security Shield</p>
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl">
+    <div class="mx-auto flex h-[72px] max-w-[1240px] items-center justify-between px-5 lg:px-8">
+      <a href="#scanner" class="flex items-center gap-3">
+        <span class="grid h-10 w-10 place-items-center rounded-xl bg-sentinel text-white shadow-lg shadow-blue-600/20">⌬</span>
+        <span><b class="block text-[15px] tracking-tight">Sentinel</b><small class="mono text-[8px] tracking-[.18em] text-slate-400">URL SECURITY SCANNER</small></span>
+      </a>
+      <nav class="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
+        <a href="#scanner" class="hover:text-sentinel">Scanner</a><a href="#intel" class="hover:text-sentinel">Dynamic Threat Intel</a><a href="#architecture" class="hover:text-sentinel">Architecture</a><a href="#safety-tips" class="hover:text-sentinel">Safety Tips</a><a href="#history" class="hover:text-sentinel">Live History</a>
+      </nav>
+      <div class="flex items-center gap-3"><span id="api-pill" class="mono rounded-full bg-slate-100 px-3 py-1.5 text-[9px] font-semibold text-slate-500"><i class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-slate-400"></i>Checking API</span><button id="mobile-nav" class="rounded-lg border border-slate-200 p-2 lg:hidden">☰</button></div>
+    </div>
+    <div id="mobile-menu" class="hidden border-t border-slate-200 bg-white px-5 py-4 lg:hidden"><div class="grid gap-3 text-sm"><a href="#scanner">Scanner</a><a href="#intel">Dynamic Threat Intel</a><a href="#architecture">Architecture</a><a href="#safety-tips">Safety Tips</a><a href="#history">Live History</a></div></div>
+  </header>
+
+  <main>
+    <section id="scanner" class="relative overflow-hidden border-b border-slate-200">
+      <div class="absolute inset-0 grid-bg opacity-90"></div>
+      <div class="absolute -left-24 top-24 h-72 w-72 rounded-full bg-blue-200/30 blur-3xl"></div><div class="absolute right-0 top-12 h-80 w-80 rounded-full bg-cyan-100/50 blur-3xl"></div>
+      <div class="relative mx-auto grid max-w-[1240px] items-center gap-14 px-5 py-20 lg:grid-cols-[1fr_1.05fr] lg:px-8 lg:py-28">
+        <div class="reveal">
+          <p class="mono mb-5 text-[10px] font-bold tracking-[.2em] text-sentinel">SENTINEL / URL THREAT ANALYSIS</p>
+          <h1 class="max-w-[680px] text-5xl font-black leading-[.96] tracking-[-.055em] text-slate-950 sm:text-6xl lg:text-7xl">Know before <span class="text-sentinel">you click.</span></h1>
+          <p class="mt-7 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">Inspect URLs with machine-learning heuristics and safe webpage inspection. Sentinel combines its existing XGBoost URL model with an additional webpage evidence layer.</p>
+          <div class="mt-7 flex flex-wrap gap-2"><span class="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-sentinel">33 URL signals</span><span class="rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700">HTML inspection</span><span class="rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700">Explainable evidence</span></div>
+        </div>
+        <div class="relative reveal">
+          <div class="orb float absolute -right-2 -top-10 hidden h-40 w-40 rounded-full bg-white/80 lg:block"><div class="spin absolute inset-3 rounded-full border border-dashed border-blue-300"></div><div class="spin2 absolute inset-8 rounded-full border border-cyan-200"></div><div class="absolute inset-0 grid place-items-center text-3xl text-sentinel">⌬</div></div>
+          <div class="glass relative overflow-hidden rounded-[28px] p-5 sm:p-7">
+            <div class="absolute inset-x-0 top-0 scanline"></div>
+            <div class="mb-6 flex items-start justify-between gap-4"><div><p class="mono text-[9px] font-bold tracking-[.16em] text-slate-400">LIVE URL SCANNER</p><h2 class="mt-1 text-lg font-bold">ML + Web Inspection</h2></div><span class="rounded-full bg-emerald-50 px-2.5 py-1 mono text-[8px] font-bold text-emerald-700">SAFE FETCH</span></div>
+            <form id="scan-form" class="space-y-3">
+              <div class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-2.5 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10"><span class="text-slate-400">◎</span><input id="url" class="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm outline-none" placeholder="https://example.com" autocomplete="url"/><kbd class="hidden rounded bg-white px-2 py-1 mono text-[9px] text-slate-400 shadow-sm sm:block">Enter</kbd></div>
+              <button id="scan-btn" class="group flex w-full items-center justify-center gap-2 rounded-2xl bg-sentinel px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-electric hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70"><span>Analyze URL</span><span class="transition group-hover:translate-x-1">→</span></button>
+            </form>
+            <div class="mt-5 flex flex-wrap items-center gap-2 text-xs"><span class="text-slate-400">Try:</span><button data-sample="https://example.com" class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-blue-300 hover:text-sentinel">example.com</button><button data-sample="https://github.com" class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-blue-300 hover:text-sentinel">github.com</button><button data-sample="https://accounts.google.com" class="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-blue-300 hover:text-sentinel">accounts.google.com</button></div>
+            <div id="scan-progress" class="mt-5 hidden rounded-2xl border border-slate-200 bg-white/80 p-4"><div class="mono mb-3 text-[9px] font-bold tracking-widest text-slate-400">SECURITY PIPELINE</div><div id="scan-steps" class="grid gap-2"></div></div>
+            <div id="error" class="mt-4 hidden rounded-xl bg-red-50 p-3 text-xs text-red-700"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="hidden border-b border-slate-200 bg-white">
+      <div class="mx-auto max-w-[1240px] px-5 py-16 lg:px-8">
+        <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p class="mono text-[9px] font-bold tracking-[.18em] text-sentinel">LIVE ANALYSIS</p><h2 class="mt-2 text-3xl font-black tracking-tight">Security decision & evidence</h2></div><span id="result-time" class="mono text-[9px] text-slate-400"></span></div>
+        <div class="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
+          <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-card sm:p-8">
+            <div class="flex flex-col gap-7 sm:flex-row sm:items-center"><div class="relative h-44 w-44 shrink-0"><svg viewBox="0 0 120 120" class="gauge-ring h-full w-full"><circle cx="60" cy="60" r="50" fill="none" stroke="#E2E8F0" stroke-width="9"/><circle id="gauge" cx="60" cy="60" r="50" fill="none" stroke="#1D4ED8" stroke-width="9" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314"/></svg><div class="absolute inset-0 grid place-items-center"><div class="text-center"><strong id="score" class="block text-4xl font-black">0</strong><span class="mono text-[9px] text-slate-400">RISK / 100</span></div></div></div><div><span id="risk-pill" class="inline-flex rounded-full px-3 py-1.5 mono text-[9px] font-bold"></span><h3 id="prediction" class="mt-3 text-3xl font-black tracking-tight"></h3><p id="probability" class="mt-1 text-sm text-slate-500"></p><p id="analyzed-url" class="mt-4 break-all mono text-[10px] text-slate-400"></p></div></div>
+            <div class="mt-8 grid gap-3 sm:grid-cols-2"><div class="rounded-2xl bg-white p-4"><span class="mono text-[9px] text-slate-400">URL MODEL</span><strong id="ml-score" class="mt-2 block text-xl"></strong><p class="mt-1 text-xs text-slate-500">XGBoost score from 33 URL-based signals.</p></div><div class="rounded-2xl bg-white p-4"><span class="mono text-[9px] text-slate-400">WEB INSPECTION</span><strong id="web-score" class="mt-2 block text-xl"></strong><p id="web-summary" class="mt-1 text-xs text-slate-500"></p></div></div>
+          </article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-card sm:p-8"><p class="mono text-[9px] font-bold tracking-[.18em] text-slate-400">WHY SENTINEL REACHED THIS RESULT</p><div id="reasons" class="mt-5 grid gap-2"></div></article>
+        </div>
+        <div id="web-metrics" class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
+      </div>
+    </section>
+
+    <section id="intel" class="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-28">
+      <div class="reveal flex flex-col justify-between gap-5 lg:flex-row lg:items-end"><div><p class="mono text-[9px] font-bold tracking-[.18em] text-cyan-700">DOMAIN & THREAT INSPECTION ENGINE</p><h2 class="mt-3 max-w-2xl text-4xl font-black tracking-[-.04em] sm:text-5xl">Evidence layers, not just a verdict.</h2></div><p class="max-w-xl text-sm leading-6 text-slate-500">The current system supports URL-based ML detection plus an additional webpage inspection layer. External DNS, SSL, IP intelligence and blacklist feeds are shown as future-ready extension points rather than fabricated live data.</p></div>
+      <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div class="tilt reveal rounded-3xl border border-slate-200 bg-white p-6 shadow-card"><div class="mb-10 grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-sentinel">◈</div><span class="mono text-[9px] text-slate-400">01 / URL SIGNALS</span><h3 class="mt-2 font-bold">Heuristic AI Analysis</h3><p class="mt-2 text-sm leading-6 text-slate-500">33 URL-derived features feed the existing XGBoost phishing classifier.</p></div>
+        <div class="tilt reveal rounded-3xl border border-slate-200 bg-white p-6 shadow-card"><div class="mb-10 grid h-11 w-11 place-items-center rounded-xl bg-cyan-50 text-cyan-700">◎</div><span class="mono text-[9px] text-slate-400">02 / WEBPAGE</span><h3 class="mt-2 font-bold">Safe Web Inspection</h3><p class="mt-2 text-sm leading-6 text-slate-500">Forms, password inputs, iframes, redirects and suspicious page signals add context.</p></div>
+        <div class="tilt reveal rounded-3xl border border-slate-200 bg-white p-6 shadow-card"><div class="mb-10 grid h-11 w-11 place-items-center rounded-xl bg-indigo-50 text-indigo-700">⌁</div><span class="mono text-[9px] text-slate-400">03 / GRAPH</span><h3 class="mt-2 font-bold">Redirect Evidence</h3><p class="mt-2 text-sm leading-6 text-slate-500">Redirect behavior is surfaced when available from the inspection response.</p></div>
+        <div class="tilt reveal rounded-3xl border border-slate-200 bg-white p-6 shadow-card"><div class="mb-10 grid h-11 w-11 place-items-center rounded-xl bg-amber-50 text-amber-700">✓</div><span class="mono text-[9px] text-slate-400">04 / EXTENSIONS</span><h3 class="mt-2 font-bold">Threat Intelligence Ready</h3><p class="mt-2 text-sm leading-6 text-slate-500">DNS, SSL, IP reputation and blacklist providers can be connected later without redesigning the UX.</p></div>
+      </div>
+    </section>
+
+    <section id="architecture" class="border-y border-slate-200 bg-white">
+      <div class="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-28"><div class="reveal"><p class="mono text-[9px] font-bold tracking-[.18em] text-indigo-700">SYSTEM ARCHITECTURE</p><h2 class="mt-3 text-4xl font-black tracking-[-.04em] sm:text-5xl">From URL input to explainable risk.</h2></div>
+        <div class="mt-12 grid gap-3 lg:grid-cols-5">
+          <div class="tilt reveal rounded-2xl border border-slate-200 bg-slate-50 p-5"><span class="mono text-[9px] text-slate-400">01</span><div class="my-8 text-2xl text-sentinel">⌘</div><b>React / UI</b><p class="mt-2 text-xs leading-5 text-slate-500">URL input, scan state and evidence presentation.</p></div><div class="hidden items-center justify-center text-slate-300 lg:flex">→</div>
+          <div class="tilt reveal rounded-2xl border border-slate-200 bg-slate-50 p-5"><span class="mono text-[9px] text-slate-400">02</span><div class="my-8 text-2xl text-cyan-700">⇄</div><b>FastAPI</b><p class="mt-2 text-xs leading-5 text-slate-500">Validation, prediction routing and history APIs.</p></div><div class="hidden items-center justify-center text-slate-300 lg:flex">→</div>
+          <div class="tilt reveal rounded-2xl border border-slate-200 bg-slate-50 p-5"><span class="mono text-[9px] text-slate-400">03</span><div class="my-8 text-2xl text-indigo-700">⌬</div><b>XGBoost + Inspector</b><p class="mt-2 text-xs leading-5 text-slate-500">33 URL features plus webpage evidence.</p></div>
+        </div>
+        <div class="mt-5 grid gap-4 md:grid-cols-2"><div class="rounded-3xl border border-blue-100 bg-blue-50/60 p-6"><p class="mono text-[9px] font-bold text-sentinel">CURRENT PRODUCTION PATH</p><p class="mt-3 text-sm leading-6 text-slate-600">URL → feature extraction → XGBoost prediction → webpage inspection → combined risk → database history.</p></div></div>
+      </div>
+    </section>
+
+    <section id="history" class="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-28"><div class="reveal flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p class="mono text-[9px] font-bold tracking-[.18em] text-sentinel">LIVE HISTORY</p><h2 class="mt-2 text-4xl font-black tracking-tight">Recent scans</h2></div><button id="refresh-history" class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-600 hover:border-blue-300 hover:text-sentinel">Refresh</button></div><div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-card"><div class="grid grid-cols-[1fr_120px_120px_160px] gap-4 bg-slate-50 px-5 py-3 mono text-[9px] font-bold tracking-wider text-slate-400 max-md:hidden"><span>URL</span><span>RISK</span><span>LEVEL</span><span>TIME</span></div><div id="history-list"><div class="p-10 text-center text-sm text-slate-400">Loading scan history…</div></div></div></section>
+
+    <section id="safety-tips" class="mx-auto max-w-[1240px] px-5 pb-20 lg:px-8 lg:pb-28">
+  <div class="rounded-[32px] border border-slate-200 bg-white p-7 shadow-sm sm:p-10">
+    <div class="max-w-2xl">
+      <p class="mono text-[9px] font-bold tracking-[.18em] text-sentinel">PHISHING SAFETY</p>
+      <h2 class="mt-3 text-4xl font-black tracking-[-.04em] text-slate-950">Stay safer before you click.</h2>
+      <p class="mt-4 text-sm leading-6 text-slate-600">
+        Sentinel helps you assess suspicious URLs, but a few simple habits can reduce phishing risk even further.
+      </p>
+    </div>
+    <div class="mt-7 grid gap-4 md:grid-cols-3">
+      <article class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-sm font-black text-blue-700">01</div>
+        <h3 class="mt-4 text-base font-bold text-slate-900">Check the URL carefully</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Look for misspelled domains, unusual subdomains, extra characters, or suspicious redirects before entering sensitive information.</p>
+      </article>
+      <article class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-sm font-black text-cyan-700">02</div>
+        <h3 class="mt-4 text-base font-bold text-slate-900">Verify unexpected messages</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">If a link arrives through email, SMS, or social media unexpectedly, verify the sender and destination independently before opening it.</p>
+      </article>
+      <article class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-sm font-black text-emerald-700">03</div>
+        <h3 class="mt-4 text-base font-bold text-slate-900">Never share credentials blindly</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Do not enter passwords, OTPs, or other sensitive information on a page unless you are confident the website and request are legitimate.</p>
+      </article>
+    </div>
+  </div>
+</section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white"><div class="mx-auto grid max-w-[1240px] gap-8 px-5 py-10 sm:grid-cols-3 lg:px-8"><div><div class="flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-sentinel text-white">⌬</span><b>Sentinel</b></div><p class="mt-3 text-xs leading-5 text-slate-500">Engineered as a B.Tech CSE cybersecurity portfolio platform.</p></div><div><p class="mono text-[9px] font-bold tracking-widest text-slate-400">STACK</p><div class="mt-3 flex flex-wrap gap-2"><span class="rounded-full bg-slate-100 px-3 py-1 text-xs">React</span><span class="rounded-full bg-slate-100 px-3 py-1 text-xs">Tailwind CSS</span><span class="rounded-full bg-slate-100 px-3 py-1 text-xs">Python</span><span class="rounded-full bg-slate-100 px-3 py-1 text-xs">XGBoost</span></div></div><div class="sm:text-right"><p class="mono text-[9px] font-bold tracking-widest text-slate-400">SYSTEM</p><p id="footer-status" class="mt-3 text-xs font-semibold text-slate-600">Checking API status…</p><p class="mt-5 text-[10px] text-slate-400">© Sentinel URL Security Scanner</p></div></div></footer>
+
+<script>
+const API_BASE = window.SENTINEL_API_BASE || ((location.protocol === 'http:' || location.protocol === 'https:') ? location.origin : 'http://localhost:8000');
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const api = async (path, options={}) => { const r=await fetch(API_BASE+path,options); const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.detail||'Request failed'); return d; };
+function riskClass(level){level=String(level||'').toLowerCase();return level==='high'?'status-danger':level==='medium'?'status-warn':'status-safe'}
+function showSteps(active){const names=['Validating URL','Extracting 33 ML signals','Inspecting webpage HTML','Combining security evidence'];$('#scan-progress').classList.remove('hidden');$('#scan-steps').innerHTML=names.map((n,i)=>`<div class="flex items-center gap-2 text-xs ${i<=active?'text-slate-700':'text-slate-400'}"><span class="grid h-5 w-5 place-items-center rounded-full ${i<active?'bg-emerald-50 text-emerald-600':i===active?'bg-blue-50 text-sentinel':'bg-slate-100'}">${i<active?'✓':i===active?'•':'○'}</span>${n}</div>`).join('')}
+function normalize(d){const model=Number(d.model_risk_score??d.risk_score??0);return {...d,score:Number(d.risk_score??model)||0,model:Number.isFinite(model)?model:0,prob:Number(d.probability??0),level:String(d.risk_level||'unknown').toLowerCase(),web:d.web_analysis||null}}
+function animateScore(target){const el=$('#score');let n=0;const start=performance.now();const tick=t=>{const p=Math.min(1,(t-start)/800);n=Math.round(target*(1-Math.pow(1-p,3)));el.textContent=n;if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);const circle=$('#gauge');circle.style.transition='stroke-dashoffset .9s ease';circle.style.strokeDashoffset=314-(314*target/100);circle.style.stroke=target>=61?'#DC2626':target>=15?'#D97706':'#059669'}
+function renderResult(raw){const d=normalize(raw);$('#results').classList.remove('hidden');$('#results').scrollIntoView({behavior:'smooth',block:'start'});$('#result-time').textContent=new Date().toLocaleString();animateScore(d.score);$('#prediction').textContent=d.prediction||'Unknown';$('#probability').textContent=`${Math.round(d.prob*100)}% model probability`;$('#analyzed-url').textContent=d.url||'';$('#ml-score').textContent=`${Math.round(d.model)} / 100`;
+const pill=$('#risk-pill');pill.className=`inline-flex rounded-full px-3 py-1.5 mono text-[9px] font-bold ${riskClass(d.level)}`;pill.textContent=d.level==='high'?'HIGH RISK':d.level==='medium'?'REVIEW':'LOW RISK';
+const w=d.web;$('#web-score').textContent=w&&w.risk_score!=null?`${Math.round(w.risk_score)} / 100`:'Unavailable';$('#web-summary').textContent=w?.status==='success'?`HTTP ${w.http_status||'200'} · ${w.forms??0} forms · ${w.password_inputs??0} password fields`:(w?.error||'No webpage evidence returned.');
+const reasons=(d.reasons||[]).slice(0,8);$('#reasons').innerHTML=reasons.length?reasons.map(r=>`<div class="flex gap-3 rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-600"><span class="mt-0.5 text-sentinel">◆</span><span>${esc(r)}</span></div>`).join(''):'<div class="rounded-xl bg-emerald-50 p-4 text-xs text-emerald-700">No specific anomaly reasons were returned.</div>';
+const metrics=w&&w.status==='success'?[['HTTP STATUS',`HTTP ${w.http_status??'—'}`,'Final response status'],['FORMS / PASSWORDS',`${w.forms??0} / ${w.password_inputs??0}`,'Forms / password inputs'],['IFRAMES',`${w.iframes??0}`,'Embedded frames detected'],['REDIRECTS',`${w.redirect_count??0}`,'Redirect events observed']]:[['DNS INTELLIGENCE','Not connected','External DNS provider not part of current API'],['SSL INTELLIGENCE','Not connected','External certificate provider not part of current API'],['IP GEOLOCATION','Not connected','External IP intelligence not part of current API'],['WEBPAGE EVIDENCE','Unavailable','No successful webpage inspection response']];$('#web-metrics').innerHTML=metrics.map((m,i)=>`<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card"><span class="mono text-[9px] font-bold tracking-wider text-slate-400">${m[0]}</span><strong class="mt-3 block text-lg">${esc(m[1])}</strong><p class="mt-1 text-xs leading-5 text-slate-500">${esc(m[2])}</p></div>`).join('')}
+async function scan(){const input=$('#url');const url=input.value.trim();if(!url)return;const btn=$('#scan-btn');const old=btn.innerHTML;btn.disabled=true;$('#error').classList.add('hidden');$('#results').classList.add('hidden');showSteps(0);[1,2,3].forEach((s,i)=>setTimeout(()=>showSteps(s),650*(i+1)));try{const data=await api('/api/v1/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});showSteps(3);setTimeout(()=>renderResult(data),250);loadHistory()}catch(e){$('#error').textContent=e.message;$('#error').classList.remove('hidden')}finally{setTimeout(()=>{$('#scan-progress').classList.add('hidden');btn.disabled=false;btn.innerHTML=old},500)}}
+async function health(){try{await api('/health');$('#api-pill').innerHTML='<i class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 pulse-dot"></i>API Online';$('#api-pill').className='mono rounded-full bg-emerald-50 px-3 py-1.5 text-[9px] font-semibold text-emerald-700';$('#footer-status').textContent='API Online · Systems operational'}catch{$('#api-pill').innerHTML='<i class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-amber-500"></i>API Offline';$('#api-pill').className='mono rounded-full bg-amber-50 px-3 py-1.5 text-[9px] font-semibold text-amber-700';$('#footer-status').textContent='API Offline · Start FastAPI backend'}}
+async function loadHistory(){try{const d=await api('/api/v1/history');const arr=Array.isArray(d)?d:(d.items||d.history||d.results||[]);$('#history-list').innerHTML=arr.slice(0,8).map(x=>`<div class="grid gap-3 border-t border-slate-100 px-5 py-4 text-xs md:grid-cols-[1fr_120px_120px_160px] md:items-center"><div class="break-all font-medium text-slate-700">${esc(x.url)}</div><div><b>${Math.round(Number(x.risk_score||0))}/100</b></div><div><span class="rounded-full px-2.5 py-1 mono text-[8px] font-bold ${riskClass(x.risk_level)}">${esc(String(x.risk_level||'unknown').toUpperCase())}</span></div><div class="mono text-[9px] text-slate-400">${esc(x.created_at||'')}</div></div>`).join('')||'<div class="p-10 text-center text-sm text-slate-400">No scans recorded yet.</div>'}catch{$('#history-list').innerHTML='<div class="p-10 text-center text-sm text-slate-400">History unavailable. Check the API.</div>'}}
+$('#scan-form').addEventListener('submit',e=>{e.preventDefault();scan()});$('#refresh-history').addEventListener('click',loadHistory);document.querySelectorAll('[data-sample]').forEach(b=>b.addEventListener('click',()=>{$('#url').value=b.dataset.sample;$('#url').focus()}));document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===$('#url'))scan()});$('#mobile-nav').addEventListener('click',()=>$('#mobile-menu').classList.toggle('hidden'));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});document.querySelectorAll('.reveal').forEach(e=>io.observe(e));document.querySelectorAll('.tilt').forEach(card=>{card.addEventListener('pointermove',e=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(900px) rotateX(${(-y*3).toFixed(2)}deg) rotateY(${(x*4).toFixed(2)}deg) translateY(-3px)`});card.addEventListener('pointerleave',()=>card.style.transform='')});
+setTimeout(()=>$('#browser-check').classList.add('hide'),2000);health();loadHistory();
+</script>
+</body>
+</html>
